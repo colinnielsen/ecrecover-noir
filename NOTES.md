@@ -1,18 +1,18 @@
 ## Notes
 
-1. `nargo check`
+To build the prover and verifier toml against the circuit
 
-- This builds the prover and verifier toml against the circuit
+1. `nargo check`
 
 2. Fill the prover
 
+To create a proof in `proofs/`
+
 3. `nargo prove [PROOF_NAME]`
 
-- This create a proof in `proofs/`
+To verifies the proof file in `proofs/`
 
 4. `nargo verify [PROOF_NAME]`
-
-- This verifies the proof file in `proofs/`
 
 empty keccak hahes
 String = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470
@@ -21,6 +21,7 @@ Bytes = 0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563
 Uint = 0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563
 
 ### Prover.toml
+
 x + y of hardhat 0 address:
 
 - private key = ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
