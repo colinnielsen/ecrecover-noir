@@ -1,4 +1,4 @@
-use dep::keccak256;
+use dep::std;
 
 fn coordinates_to_u64_array(
     array_x: [u8; 32],
@@ -22,6 +22,7 @@ fn coordinates_to_u64_array(
         // combined_u64[i + 8] = value; // right aligned version?
         combined_u64[i] = value; // left aligned version
     }
+
     combined_u64
 }
 
@@ -51,7 +52,6 @@ fn test_coordinates_to_u64_array() {
     constrain pub_key[13] == 0;
     constrain pub_key[14] == 0;
     constrain pub_key[15] == 0;
-
     // the above output is the hex "0x8318535b54105d4a7aae60c08fc45f9687181b4fdfc625bd1a753fa7397fed753547f11ca8696646f2f3acb08e31016afac23e630c5d11f59f61fef57b0d2aa5"
     // which is the correct public key for the x + y coordinate
 }
@@ -61,11 +61,11 @@ fn u64_4_to_u8_32(
 ) -> [u8; 32] {
     let mut output: [u8; 32] = [0; 32];
     let mut output_index = 0;
-    for i in 0..4 {
-        for j in 0..8 {
-            let shift_amount = j * 8;
-            let byte = ((array[i] >> shift_amount as u64) & 0xFF) as u8;
-            output[output_index] = byte;
+
+    for num_idx in 0..4 {
+        for bit_pos in 0..8 {
+            let shift_amount: u64 = 56 - (bit_pos * 8) as u64;
+            output[output_index] = ((array[num_idx] >> shift_amount) & 255) as u8;
             output_index += 1;
         }
     }
@@ -73,7 +73,7 @@ fn u64_4_to_u8_32(
     output
 }
 
-// #[test]
+#[test]
 fn test_u64_4_to_u8_32() {
     let hash: [u64; 4] = [
         19446391870127103306,
@@ -84,20 +84,69 @@ fn test_u64_4_to_u8_32() {
  
     let arr_out = u64_4_to_u8_32(hash);
 
-    constrain arr_out[0] == 17;
-    constrain arr_out[0] == 252;
-    constrain arr_out[0] == 88;
-    constrain arr_out[0] == 243;
-    constrain arr_out[0] == 218;
-    constrain arr_out[0] == 191;
-    constrain arr_out[0] == 46;
-    constrain arr_out[0] == 234;
-    
+    constrain arr_out[0] == 13;
+    constrain arr_out[1] == 223;
+    constrain arr_out[2] == 118;
+    constrain arr_out[3] == 95;
+    constrain arr_out[4] == 221;
+    constrain arr_out[5] == 248;
+    constrain arr_out[6] == 93;
+    constrain arr_out[7] == 74;
+    constrain arr_out[8] == 122;
+    constrain arr_out[9] == 174;
+    constrain arr_out[10] == 96;
+    constrain arr_out[11] == 192;
+    constrain arr_out[12] == 143;
+    constrain arr_out[13] == 196;
+    constrain arr_out[14] == 95;
+    constrain arr_out[15] == 150;
+    constrain arr_out[16] == 135;
+    constrain arr_out[17] == 24;
+    constrain arr_out[18] == 27;
+    constrain arr_out[19] == 79;
+    constrain arr_out[20] == 223;
+    constrain arr_out[21] == 198;
+    constrain arr_out[22] == 37;
+    constrain arr_out[23] == 189;
+    constrain arr_out[24] == 26;
+    constrain arr_out[25] == 117;
+    constrain arr_out[26] == 63;
+    constrain arr_out[27] == 167;
+    constrain arr_out[28] == 57;
+    constrain arr_out[29] == 127;
+    constrain arr_out[30] == 237;
+    constrain arr_out[31] == 117;
 }
+
+fn u8_32_to_u160(
+    array: [u8; 32]
+) -> Field {
+    let mut addr: Field = 0;
+
+    for i in 0..20 {
+        // only take the last 20 bytes of the hash
+        addr = (addr * 256) + (array[i + 12] as Field);
+    }
+
+    addr
+}
+
+#[test]
+fn test_u8_32_to_u160() {
+    // keccak hash of hardhat 0 address pub key (0xc1ffd3cfee2d9e5cd67643f8f39fd6e51aad88f6f4ce6ab8827279cfffb92266) as u8 array
+    let hashed_pub_key = [
+        193,255,211,207,238,45,158,92,214,118,67,248,243,159,214,229,26,173,136,246,244,206,106,184,130,114,121,207,255,185,34,102
+    ];
+    let addr = u8_32_to_u160(hashed_pub_key);
+
+    constrain addr == 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266; // hardhat address 0
+}
+
 
 //
 //// playground
 //
+
 
 // #[test]
 // fn test_keccak256() {
@@ -118,6 +167,33 @@ fn test_u64_4_to_u8_32() {
 //         let reverse_i = 32 - i;
 
 //     }
+// }
+
+// fn u64_4_to_ethereum_addr(
+//     array: [u64; 4]
+// ) -> Field {
+//     let u8_32 = u64_4_to_u8_32(array);
+//     let right_most = right_20_bytes(u8_32);
+
+//     let mut addr: Field = 0;
+//     for i in 0..20 {
+//         addr = (addr * 256) + right_most[i] as Field;
+//     }
+
+//     addr
+// }
+
+// #[test]
+// fn test_right_20_bytes(
+//     array: [u8; 32]
+// ) -> [u8; 20] {
+//     let mut output = [0; 20];
+
+//     for i in 0..20 {
+//         output[i] = array[i + 12];
+//     }
+
+//     output
 // }
 
 // fn split_pub_key_to_u64_array(
