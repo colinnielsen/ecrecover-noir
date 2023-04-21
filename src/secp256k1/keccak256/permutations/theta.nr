@@ -1,6 +1,21 @@
-use crate::constants;
+// Input size related
 
-fn theta(state: [u64; constants::NUM_LANES]) -> [u64; constants::NUM_LANES] {
+// The input must be at least 2 bits smaller than the block size to accommodate the padding bits.
+global INPUT_SIZE: Field = 16;
+// Blocks are 136 bytes. 138 * 8 = 1088 bits.
+global BLOCK_SIZE: Field = 17;
+
+global OUTPUT_SIZE: Field = 4;
+
+// State size related
+global LANE_LENGTH: Field = 64;
+global COLUMN_LENGTH: Field = 5;
+global NUM_LANES: Field = 25;
+
+// Misc
+global NUM_ROUNDS: Field = 24;
+
+fn theta(state: [u64; NUM_LANES]) -> [u64; NUM_LANES] {
     // The theta function works by calculating the parity of each of the columns in the state array. We store these
     // in the C[x, z] arrays.
     // C[x, z] = A[x, 0, z] ^ A[x, 1, z] ^ A[x, 2, z] ^ A[x, 3, z] ^ A[x, 4, z]
@@ -18,8 +33,8 @@ fn theta(state: [u64; constants::NUM_LANES]) -> [u64; constants::NUM_LANES] {
     let d4: u64 = c3 ^ rotl64(c0, 1);
 
     // The labelling convention for the state array is `lane(x, y) = state[5y + x]`.
-    let mut new_state = [0; constants::NUM_LANES];
-    for y in 0..constants::COLUMN_LENGTH {
+    let mut new_state = [0; NUM_LANES];
+    for y in 0..COLUMN_LENGTH {
         new_state[5 * y + 0] = state[5 * y + 0] ^ d0;
         new_state[5 * y + 1] = state[5 * y + 1] ^ d1;
         new_state[5 * y + 2] = state[5 * y + 2] ^ d2;
@@ -48,11 +63,11 @@ fn test_theta(){
   // https://github.com/XKCP/XKCP/blob/64404beeeb261b08a1076fe2f076e4e28dd9b040/tests/TestVectors/KeccakF-1600-IntermediateValues.txt
   
   // Round 0
-  let round_zero_input: [u64; constants::NUM_LANES] = [0; constants::NUM_LANES];
+  let round_zero_input: [u64; NUM_LANES] = [0; NUM_LANES];
   constrain theta(round_zero_input) == round_zero_input;
 
   // Round 1
-  let mut round_one_input: [u64; constants::NUM_LANES] = [0; constants::NUM_LANES];
+  let mut round_one_input: [u64; NUM_LANES] = [0; NUM_LANES];
   round_one_input[0] = 0x0000000000000001;
   let round_one_output = [
     0x0000000000000001,0x0000000000000001,0x0000000000000000,0x0000000000000000,0x0000000000000002,
@@ -64,7 +79,7 @@ fn test_theta(){
   constrain theta(round_one_input) == round_one_output;
 
   // Round 2
-  let round_two_input: [u64; constants::NUM_LANES] = [
+  let round_two_input: [u64; NUM_LANES] = [
     0x0000000000008083, 0x0000100000000000, 0x0000000000008000, 0x0000000000000001, 0x0000100000008000,
     0x0000000000000000, 0x0000200000200000, 0x0000000000000000, 0x0000200000000000, 0x0000000000200000,
     0x0000000000000002, 0x0000000000000200, 0x0000000000000000, 0x0000000000000202, 0x0000000000000000,

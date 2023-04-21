@@ -1,7 +1,5 @@
 use dep::std;
-use dep::keccak256;
-use dep::keccak256::constants;
-
+ 
 mod secp256k1;
 
 fn ecrecover(
@@ -23,7 +21,7 @@ fn ecrecover(
 //     let signature = [57, 17, 112, 239, 241, 30, 64, 157, 170, 50, 85, 145, 156, 69, 226, 85, 147, 164, 10, 82, 71, 93, 42, 132, 200, 220, 161, 255, 95, 241, 211, 141, 81, 7, 150, 25, 25, 27, 162, 213, 80, 61, 12, 170, 50, 4, 154, 203, 252, 229, 119, 29, 202, 153, 50, 25, 126, 145, 245, 23, 136, 75, 29, 177];
 //     let hashed_message = [13, 82, 120, 60, 76, 186, 215, 235, 175, 126, 185, 67, 252, 100, 143, 82, 130, 165, 32, 112, 68, 47, 193, 141, 141, 209, 109, 219, 47, 203, 175, 102];
 
-//     ecrecover(pub_key_x, pub_key_y, signature, hashed_message);
+//     let addr = ecrecover(pub_key_x, pub_key_y, signature, hashed_message);
 
 //     constrain addr == 0xe5c6169ca7a4533a0b3123e29d1efdcc38e15c67; //should be 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266;
 // }

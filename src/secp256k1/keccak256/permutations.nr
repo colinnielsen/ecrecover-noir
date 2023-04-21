@@ -1,4 +1,19 @@
-use crate::constants;
+// Input size related
+
+// The input must be at least 2 bits smaller than the block size to accommodate the padding bits.
+global INPUT_SIZE: Field = 16;
+// Blocks are 136 bytes. 138 * 8 = 1088 bits.
+global BLOCK_SIZE: Field = 17;
+
+global OUTPUT_SIZE: Field = 4;
+
+// State size related
+global LANE_LENGTH: Field = 64;
+global COLUMN_LENGTH: Field = 5;
+global NUM_LANES: Field = 25;
+
+// Misc
+global NUM_ROUNDS: Field = 24;
 
 mod chi;
 mod iota;
@@ -7,12 +22,12 @@ mod theta;
 
 // This is a simplified implementation of the Keccak256 absorb function where we assume the input is smaller than the
 // internal state size.
-fn absorb(input: [u64; constants::BLOCK_SIZE]) -> [u64; constants::NUM_LANES] {
-  let mut state: [u64; constants::NUM_LANES] = [0; constants::NUM_LANES];
+fn absorb(input: [u64; BLOCK_SIZE]) -> [u64; NUM_LANES] {
+  let mut state: [u64; NUM_LANES] = [0; NUM_LANES];
 
   // We should in theory XOR the input with the internal state. However we know that X ^ 0 = X so we can just write
   // the input into the state. We can do this as the input is guaranteed to be smaller than the state size.
-  for i in 0..constants::BLOCK_SIZE {
+  for i in 0..BLOCK_SIZE {
     state[i] = input[i];
   };
 
@@ -22,17 +37,17 @@ fn absorb(input: [u64; constants::BLOCK_SIZE]) -> [u64; constants::NUM_LANES] {
   state
 }
 
-fn squeeze(input: [u64; constants::NUM_LANES]) -> [u64; constants::OUTPUT_SIZE] {
+fn squeeze(input: [u64; NUM_LANES]) -> [u64; OUTPUT_SIZE] {
 
-  let mut result: [u64; constants::OUTPUT_SIZE] = [0; constants::OUTPUT_SIZE];
+  let mut result: [u64; OUTPUT_SIZE] = [0; OUTPUT_SIZE];
 
-  for i in 0..constants::OUTPUT_SIZE {
+  for i in 0..OUTPUT_SIZE {
       result[i] = input[i];
   };
   result
 }
 
-fn keccakfRound(state: [u64; constants::NUM_LANES], round_number: comptime Field) -> [u64; constants::NUM_LANES] {
+fn keccakfRound(state: [u64; NUM_LANES], round_number: comptime Field) -> [u64; NUM_LANES] {
 
   let state_after_theta = theta::theta(state);
   let state_after_rhoPi = rhoPi::rhoPi(state_after_theta);
@@ -42,9 +57,9 @@ fn keccakfRound(state: [u64; constants::NUM_LANES], round_number: comptime Field
   new_state
 }
 
-fn keccakf(input: [u64; constants::NUM_LANES]) -> [u64; constants::NUM_LANES] {
+fn keccakf(input: [u64; NUM_LANES]) -> [u64; NUM_LANES] {
   let mut state = input;
-  for i in 0..constants::NUM_ROUNDS {
+  for i in 0..NUM_ROUNDS {
     state = keccakfRound(state, i);
   };
   state
@@ -52,10 +67,10 @@ fn keccakf(input: [u64; constants::NUM_LANES]) -> [u64; constants::NUM_LANES] {
 
 #[test]
 fn test_keccakfRound(){
-  let input: [u64; constants::NUM_LANES] = [0; constants::NUM_LANES];
+  let input: [u64; NUM_LANES] = [0; NUM_LANES];
 
   // Round 0
-  let mut after_round_one: [u64; constants::NUM_LANES] = [0; constants::NUM_LANES];
+  let mut after_round_one: [u64; NUM_LANES] = [0; NUM_LANES];
   after_round_one[0] = 0x0000000000000001;
   constrain keccakfRound(input, 0) == after_round_one;
 }
@@ -64,10 +79,10 @@ fn test_keccakfRound(){
 fn test_keccakf(){
   // Test cases taken from:
   // https://github.com/XKCP/XKCP/blob/64404beeeb261b08a1076fe2f076e4e28dd9b040/tests/TestVectors/KeccakF-1600-IntermediateValues.txt
-  let input_state: [u64; constants::NUM_LANES] = [0; constants::NUM_LANES];
+  let input_state: [u64; NUM_LANES] = [0; NUM_LANES];
 
   // Permutation 0
-  let perm_zero_output: [u64; constants::NUM_LANES] = [
+  let perm_zero_output: [u64; NUM_LANES] = [
     0xF1258F7940E1DDE7, 0x84D5CCF933C0478A, 0xD598261EA65AA9EE, 0xBD1547306F80494D, 0x8B284E056253D057,
     0xFF97A42D7F8E6FD4, 0x90FEE5A0A44647C4, 0x8C5BDA0CD6192E76, 0xAD30A6F71B19059C, 0x30935AB7D08FFC64,
     0xEB5AA93F2317D635, 0xA9A6E6260D712103, 0x81A57C16DBCF555F, 0x43B831CD0347C826, 0x01F22F1A11A5569F,
@@ -77,7 +92,7 @@ fn test_keccakf(){
   constrain keccakf(input_state) == perm_zero_output;
 
   // Permutation 1
-  let perm_one_output: [u64; constants::NUM_LANES] = [
+  let perm_one_output: [u64; NUM_LANES] = [
     0x2D5C954DF96ECB3C, 0x6A332CD07057B56D, 0x093D8D1270D76B6C, 0x8A20D9B25569D094, 0x4F9C4F99E5E7F156,
     0xF957B9A2DA65FB38, 0x85773DAE1275AF0D, 0xFAF4F247C3D810F7, 0x1F1B9EE6F79A8759, 0xE4FECC0FEE98B425,
     0x68CE61B6B9CE68A1, 0xDEEA66C4BA8F974F, 0x33C43D836EAFB1F5, 0xE00654042719DBD9, 0x7CF8A9F009831265,

@@ -1,29 +1,44 @@
-use crate::constants;
+// Input size related
+
+// The input must be at least 2 bits smaller than the block size to accommodate the padding bits.
+global INPUT_SIZE: Field = 16;
+// Blocks are 136 bytes. 138 * 8 = 1088 bits.
+global BLOCK_SIZE: Field = 17;
+
+global OUTPUT_SIZE: Field = 4;
+
+// State size related
+global LANE_LENGTH: Field = 64;
+global COLUMN_LENGTH: Field = 5;
+global NUM_LANES: Field = 25;
+
+// Misc
+global NUM_ROUNDS: Field = 24;
 
 // This is a simplified implementation of the pad10*1 algorithm.
 // As we assume that the input length is smaller than the block size, we can ignore the potential for the padding
 // sequence to be spread over multiple blocks.
-fn pad(input: [u64; constants::INPUT_SIZE], input_length: u64) -> [u64; constants::BLOCK_SIZE] {
+fn pad(input: [u64; INPUT_SIZE], input_length: u64) -> [u64; BLOCK_SIZE] {
   // We require 2 bits of space after the message in order to include the padding bits.
   // constrain input_length < BLOCK_SIZE - 2;
 
 
-  let mut padded_input: [u64; constants::BLOCK_SIZE] = [0; constants::BLOCK_SIZE];
-  for i in 0..constants::INPUT_SIZE {
+  let mut padded_input: [u64; BLOCK_SIZE] = [0; BLOCK_SIZE];
+  for i in 0..INPUT_SIZE {
     // Caching the word from input here reduces the number of gates.
     let word = input[i];
 
-    if input_length >= ((i + 1) * constants::LANE_LENGTH) as u64 {
+    if input_length >= ((i + 1) * LANE_LENGTH) as u64 {
       // The input continues past the end of the current word.
       // We then copy it verbatim into the padded input.
 
       padded_input[i] = word;
-    } else if input_length >= (i * constants::LANE_LENGTH) as u64 {
+    } else if input_length >= (i * LANE_LENGTH) as u64 {
       // The input ends in this current word.
       // We must then insert the first padding bit at the correct location before copying it.
 
-      // Subtracting `i * constants::LANE_LENGTH` from `input_length` shifts it into the range [0, 63]
-      let bit_position: Field = input_length as Field - i * constants::LANE_LENGTH;
+      // Subtracting `i * LANE_LENGTH` from `input_length` shifts it into the range [0, 63]
+      let bit_position: Field = input_length as Field - i * LANE_LENGTH;
       
       // Copy across both the input and the padding bit.
       padded_input[i] = checked_bit_insert(word, bit_position);
@@ -33,13 +48,13 @@ fn pad(input: [u64; constants::INPUT_SIZE], input_length: u64) -> [u64; constant
     }
   };
 
-  if input_length == (constants::INPUT_SIZE * constants::LANE_LENGTH) as u64 {
+  if input_length == (INPUT_SIZE * LANE_LENGTH) as u64 {
     // Both padding bits fall in the last word and so the first wasn't written during the for-loop.
     // We can then just write both bits directly now.
-    padded_input[constants::BLOCK_SIZE - 1] = 0x8000000000000001;
+    padded_input[BLOCK_SIZE - 1] = 0x8000000000000001;
   } else {
     // Place the second 1 bit of the padding in the last bit of the block.
-    padded_input[constants::BLOCK_SIZE - 1] = 0x0000000000000001;
+    padded_input[BLOCK_SIZE - 1] = 0x0000000000000001;
   }
 
   padded_input
@@ -103,9 +118,9 @@ fn test_checked_bit_insert() {
 #[test]
 fn test_pad() {
   {
-    let input: [u64; constants::INPUT_SIZE] = [0;constants::INPUT_SIZE];
+    let input: [u64; INPUT_SIZE] = [0;INPUT_SIZE];
     let input_length: u64 = 0;
-    let expected_output: [u64; constants::BLOCK_SIZE] = [
+    let expected_output: [u64; BLOCK_SIZE] = [
       0x8000000000000000,
       0x0000000000000000,
       0x0000000000000000,
@@ -128,9 +143,9 @@ fn test_pad() {
   }
 
   {
-    let input: [u64; constants::INPUT_SIZE] = [0;constants::INPUT_SIZE];
-    let input_length: u64 = 64 * (constants::INPUT_SIZE as u64);
-    let expected_output: [u64; constants::BLOCK_SIZE] = [
+    let input: [u64; INPUT_SIZE] = [0;INPUT_SIZE];
+    let input_length: u64 = 64 * (INPUT_SIZE as u64);
+    let expected_output: [u64; BLOCK_SIZE] = [
       0x0000000000000000,
       0x0000000000000000,
       0x0000000000000000,
@@ -154,10 +169,10 @@ fn test_pad() {
 
   // {
   //   // Input extends past stated length
-  //   let mut input: [u64; constants::INPUT_SIZE] = [0;constants::INPUT_SIZE];
-  //   input[constants::INPUT_SIZE - 1] = 0x0000000000000001;
+  //   let mut input: [u64; INPUT_SIZE] = [0;INPUT_SIZE];
+  //   input[INPUT_SIZE - 1] = 0x0000000000000001;
   //   let input_length: u64 = 0;
-  //   let expected_output: [u64; constants::BLOCK_SIZE] = [
+  //   let expected_output: [u64; BLOCK_SIZE] = [
   //     0x0000000000000000,
   //     0x0000000000000000,
   //     0x0000000000000000,

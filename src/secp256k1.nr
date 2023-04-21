@@ -1,7 +1,6 @@
 use dep::std;
-use dep::keccak256;
-use dep::keccak256::constants;
 
+mod keccak256;
 mod helpers;
 
 struct PubKey {

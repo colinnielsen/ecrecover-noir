@@ -1,11 +1,26 @@
-use crate::constants;
+// Input size related
 
-fn chi(state: [u64; constants::NUM_LANES]) -> [u64; constants::NUM_LANES] {
+// The input must be at least 2 bits smaller than the block size to accommodate the padding bits.
+global INPUT_SIZE: Field = 16;
+// Blocks are 136 bytes. 138 * 8 = 1088 bits.
+global BLOCK_SIZE: Field = 17;
+
+global OUTPUT_SIZE: Field = 4;
+
+// State size related
+global LANE_LENGTH: Field = 64;
+global COLUMN_LENGTH: Field = 5;
+global NUM_LANES: Field = 25;
+
+// Misc
+global NUM_ROUNDS: Field = 24;
+
+fn chi(state: [u64; NUM_LANES]) -> [u64; NUM_LANES] {
   let mut new_state = state;
 
   // The labelling convention for the state array is `Lane(x, y) = state[5y + x]`.
   // Iterate over each plane and write updated values for each lane.
-  for y in 0..constants::COLUMN_LENGTH {
+  for y in 0..COLUMN_LENGTH {
     new_state[5 * y + 0] = state[5 * y + 0] ^ ((!state[5 * y + 1]) & state[5 * y + 2]);
     new_state[5 * y + 1] = state[5 * y + 1] ^ ((!state[5 * y + 2]) & state[5 * y + 3]);
     new_state[5 * y + 2] = state[5 * y + 2] ^ ((!state[5 * y + 3]) & state[5 * y + 4]);
@@ -22,7 +37,7 @@ fn test_chi(){
   // https://github.com/XKCP/XKCP/blob/64404beeeb261b08a1076fe2f076e4e28dd9b040/tests/TestVectors/KeccakF-1600-IntermediateValues.txt
   
   // Round 0
-  let round_zero_input: [u64; constants::NUM_LANES] = [0; constants::NUM_LANES];
+  let round_zero_input: [u64; NUM_LANES] = [0; NUM_LANES];
   constrain chi(round_zero_input) == round_zero_input;
 
   // Round 1
@@ -43,7 +58,7 @@ fn test_chi(){
   constrain chi(round_one_input) == round_one_output;
 
   // Round 2
-  let round_two_input: [u64; constants::NUM_LANES] = [
+  let round_two_input: [u64; NUM_LANES] = [
     0x0000700000600487, 0x18C8900002300102, 0x0030300003800101, 0x2002083081800004, 0x08800C0042C14000,
     0x00041840D0000210, 0x20030210B0100002, 0x0003800003042030, 0x3191200000600200, 0x40000E20040400C0,
     0x0000260020031912, 0x001C000808018180, 0x0000830C1C000042, 0x00220030010B0100, 0xC400018210100001,

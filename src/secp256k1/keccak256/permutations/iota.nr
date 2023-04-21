@@ -1,8 +1,23 @@
-use crate::constants;
+// Input size related
 
-fn iota(state: [u64; constants::NUM_LANES], round_number: comptime Field) -> [u64; constants::NUM_LANES] {
+// The input must be at least 2 bits smaller than the block size to accommodate the padding bits.
+global INPUT_SIZE: Field = 16;
+// Blocks are 136 bytes. 138 * 8 = 1088 bits.
+global BLOCK_SIZE: Field = 17;
+
+global OUTPUT_SIZE: Field = 4;
+
+// State size related
+global LANE_LENGTH: Field = 64;
+global COLUMN_LENGTH: Field = 5;
+global NUM_LANES: Field = 25;
+
+// Misc
+global NUM_ROUNDS: Field = 24;
+
+fn iota(state: [u64; NUM_LANES], round_number: comptime Field) -> [u64; NUM_LANES] {
   // Each element of RC is a bitmap for the mask to apply to the lane.
-  let RC: [comptime u64; constants::NUM_ROUNDS] = [
+  let RC: [comptime u64; NUM_ROUNDS] = [
         0x0000000000000001, 0x0000000000008082, 0x800000000000808A,
         0x8000000080008000, 0x000000000000808B, 0x0000000080000001,
         0x8000000080008081, 0x8000000000008009, 0x000000000000008A,
@@ -26,7 +41,7 @@ fn test_iota(){
   // https://github.com/XKCP/XKCP/blob/64404beeeb261b08a1076fe2f076e4e28dd9b040/tests/TestVectors/KeccakF-1600-IntermediateValues.txt
   
   // Round 0
-  let round_zero_input: [u64; constants::NUM_LANES] = [0; constants::NUM_LANES];
+  let round_zero_input: [u64; NUM_LANES] = [0; NUM_LANES];
   let round_zero_output = [
     0x0000000000000001,0x0000000000000000,0x0000000000000000,0x0000000000000000,0x0000000000000000,
     0x0000000000000000,0x0000000000000000,0x0000000000000000,0x0000000000000000,0x0000000000000000,
@@ -44,7 +59,7 @@ fn test_iota(){
     0x0000000010000400, 0x0000000000000000, 0x0000000000000400, 0x0000000010000000, 0x0000000000000000,
     0x0000010000000000, 0x0000000000000000, 0x0000010000000004, 0x0000000000000000, 0x0000000000000004,
   ];
-  let round_one_output: [u64; constants::NUM_LANES] = [
+  let round_one_output: [u64; NUM_LANES] = [
     0x0000000000008083, 0x0000100000000000, 0x0000000000008000, 0x0000000000000001, 0x0000100000008000,
     0x0000000000000000, 0x0000200000200000, 0x0000000000000000, 0x0000200000000000, 0x0000000000200000,
     0x0000000000000002, 0x0000000000000200, 0x0000000000000000, 0x0000000000000202, 0x0000000000000000,
@@ -54,7 +69,7 @@ fn test_iota(){
   constrain iota(round_one_input, 1) == round_one_output;
 
   // Round 2
-  let round_two_input: [u64; constants::NUM_LANES] = [
+  let round_two_input: [u64; NUM_LANES] = [
     0x0030500001E00486, 0x38CA983082300106, 0x08B0340041C14101, 0x2002783081A00483, 0x10488C0040D14100,
     0x00049840D3042220, 0x11932210B0700202, 0x40038E20070020F0, 0x31953040D0600010, 0x60030C30241400C2,
     0x0000A50434031950, 0x003E0038090A8080, 0xC400828E0C100043, 0x0022263021081812, 0xC41C018A18108081,
