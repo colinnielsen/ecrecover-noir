@@ -1,5 +1,6 @@
 use dep::std;
 
+unconstrained
 fn coordinates_to_u64_array(
     array_x: [u8; 32],
     array_y: [u8; 32],
@@ -56,6 +57,7 @@ fn test_coordinates_to_u64_array() {
     // which is the correct public key for the x + y coordinate
 }
 
+unconstrained
 fn u64_4_to_u8_32(
     array: [u64; 4]
 ) -> [u8; 32] {
