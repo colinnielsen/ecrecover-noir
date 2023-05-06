@@ -12,16 +12,14 @@ fn coordinates_to_u64_array(
         for j in 0..8 {
             value |= (array_x[i*8+j] as u64) << ((56 - j*8) as u64);
         }
-        // combined_u64[i + 8] = value; // right aligned version?
-        combined_u64[i] = value; // left aligned version
+         combined_u64[i] = value;
     }
     for i in 4..8 {
         let mut value: u64 = 0;
         for j in 0..8 {
             value |= (array_y[(i-4)*8+j] as u64) << ((56 - j*8) as u64);
         }
-        // combined_u64[i + 8] = value; // right aligned version?
-        combined_u64[i] = value; // left aligned version
+         combined_u64[i] = value;
     }
 
     combined_u64
@@ -55,6 +53,23 @@ fn test_coordinates_to_u64_array() {
     constrain pub_key[15] == 0;
     // the above output is the hex "0x8318535b54105d4a7aae60c08fc45f9687181b4fdfc625bd1a753fa7397fed753547f11ca8696646f2f3acb08e31016afac23e630c5d11f59f61fef57b0d2aa5"
     // which is the correct public key for the x + y coordinate
+}
+
+unconstrained
+fn unify_pub_x_pub_y(
+    array_x: [u8; 32],
+    array_y: [u8; 32],
+) -> [u8; 64] {
+    let mut combined: [u8; 64] = [0; 64];
+
+    for i in 0..32 {
+        combined[i] = array_x[i];
+    }
+    for i in 0..32 {
+        combined[i + 32] = array_y[i];
+    }
+
+    combined
 }
 
 unconstrained
@@ -142,6 +157,36 @@ fn test_u8_32_to_u160() {
     let addr = u8_32_to_u160(hashed_pub_key);
 
     constrain addr == 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266; // hardhat address 0
+}
+
+unconstrained
+fn split_pub_key(
+    pub_key: [u8; 64]
+) -> [[u8; 32]; 2] {
+    let mut pub_key_x: [u8; 32] = [0; 32];
+    let mut pub_key_y: [u8; 32] = [0; 32];
+
+    for i in 0..32 {
+        pub_key_x[i] = pub_key[i];
+        pub_key_y[i] = pub_key[i + 32];
+    }
+
+    [pub_key_x, pub_key_y]
+}
+
+unconstrained
+fn split_uncompressed_pub_key(
+    pub_key: [u8; 65]
+) -> [[u8; 32]; 2] {
+    let mut pub_key_x: [u8; 32] = [0; 32];
+    let mut pub_key_y: [u8; 32] = [0; 32];
+
+    for i in 0..32 {
+        pub_key_x[i] = pub_key[i + 1];
+        pub_key_y[i] = pub_key[i + 32 + 1];
+    }
+
+    [pub_key_x, pub_key_y]
 }
 
 
