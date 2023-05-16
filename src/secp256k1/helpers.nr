@@ -35,22 +35,22 @@ fn test_coordinates_to_u64_array() {
     ];
     let pub_key = coordinates_to_u64_array(pub_key_x, pub_key_y);
 
-    constrain pub_key[0] == 9446391870127103306;
-    constrain pub_key[1] == 8840109498736861078;
-    constrain pub_key[2] == 9734560624431998397;
-    constrain pub_key[3] == 1906500004718046581;
-    constrain pub_key[4] == 3839302312743495238;
-    constrain pub_key[5] == 17506526050819047786;
-    constrain pub_key[6] == 18069073250093961717;
-    constrain pub_key[7] == 11484740855056378533;
-    constrain pub_key[8] == 0;
-    constrain pub_key[9] == 0;
-    constrain pub_key[10] == 0;
-    constrain pub_key[11] == 0;
-    constrain pub_key[12] == 0;
-    constrain pub_key[13] == 0;
-    constrain pub_key[14] == 0;
-    constrain pub_key[15] == 0;
+    assert(pub_key[0] == 9446391870127103306);
+    assert(pub_key[1] == 8840109498736861078);
+    assert(pub_key[2] == 9734560624431998397);
+    assert(pub_key[3] == 1906500004718046581);
+    assert(pub_key[4] == 3839302312743495238);
+    assert(pub_key[5] == 17506526050819047786);
+    assert(pub_key[6] == 18069073250093961717);
+    assert(pub_key[7] == 11484740855056378533);
+    assert(pub_key[8] == 0);
+    assert(pub_key[9] == 0);
+    assert(pub_key[10] == 0);
+    assert(pub_key[11] == 0);
+    assert(pub_key[12] == 0);
+    assert(pub_key[13] == 0);
+    assert(pub_key[14] == 0);
+    assert(pub_key[15] == 0);
     // the above output is the hex "0x8318535b54105d4a7aae60c08fc45f9687181b4fdfc625bd1a753fa7397fed753547f11ca8696646f2f3acb08e31016afac23e630c5d11f59f61fef57b0d2aa5"
     // which is the correct public key for the x + y coordinate
 }
@@ -101,38 +101,38 @@ fn test_u64_4_to_u8_32() {
  
     let arr_out = u64_4_to_u8_32(hash);
 
-    constrain arr_out[0] == 13;
-    constrain arr_out[1] == 223;
-    constrain arr_out[2] == 118;
-    constrain arr_out[3] == 95;
-    constrain arr_out[4] == 221;
-    constrain arr_out[5] == 248;
-    constrain arr_out[6] == 93;
-    constrain arr_out[7] == 74;
-    constrain arr_out[8] == 122;
-    constrain arr_out[9] == 174;
-    constrain arr_out[10] == 96;
-    constrain arr_out[11] == 192;
-    constrain arr_out[12] == 143;
-    constrain arr_out[13] == 196;
-    constrain arr_out[14] == 95;
-    constrain arr_out[15] == 150;
-    constrain arr_out[16] == 135;
-    constrain arr_out[17] == 24;
-    constrain arr_out[18] == 27;
-    constrain arr_out[19] == 79;
-    constrain arr_out[20] == 223;
-    constrain arr_out[21] == 198;
-    constrain arr_out[22] == 37;
-    constrain arr_out[23] == 189;
-    constrain arr_out[24] == 26;
-    constrain arr_out[25] == 117;
-    constrain arr_out[26] == 63;
-    constrain arr_out[27] == 167;
-    constrain arr_out[28] == 57;
-    constrain arr_out[29] == 127;
-    constrain arr_out[30] == 237;
-    constrain arr_out[31] == 117;
+    assert(arr_out[0] == 13);
+    assert(arr_out[1] == 223);
+    assert(arr_out[2] == 118);
+    assert(arr_out[3] == 95);
+    assert(arr_out[4] == 221);
+    assert(arr_out[5] == 248);
+    assert(arr_out[6] == 93);
+    assert(arr_out[7] == 74);
+    assert(arr_out[8] == 122);
+    assert(arr_out[9] == 174);
+    assert(arr_out[10] == 96);
+    assert(arr_out[11] == 192);
+    assert(arr_out[12] == 143);
+    assert(arr_out[13] == 196);
+    assert(arr_out[14] == 95);
+    assert(arr_out[15] == 150);
+    assert(arr_out[16] == 135);
+    assert(arr_out[17] == 24);
+    assert(arr_out[18] == 27);
+    assert(arr_out[19] == 79);
+    assert(arr_out[20] == 223);
+    assert(arr_out[21] == 198);
+    assert(arr_out[22] == 37);
+    assert(arr_out[23] == 189);
+    assert(arr_out[24] == 26);
+    assert(arr_out[25] == 117);
+    assert(arr_out[26] == 63);
+    assert(arr_out[27] == 167);
+    assert(arr_out[28] == 57);
+    assert(arr_out[29] == 127);
+    assert(arr_out[30] == 237);
+    assert(arr_out[31] == 117);
 }
 
 fn u8_32_to_u160(
@@ -156,7 +156,7 @@ fn test_u8_32_to_u160() {
     ];
     let addr = u8_32_to_u160(hashed_pub_key);
 
-    constrain addr == 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266; // hardhat address 0
+    assert(addr == 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266); // hardhat address )0
 }
 
 unconstrained
@@ -201,7 +201,7 @@ fn split_uncompressed_pub_key(
 //     arr[0] = 1;
 
 //     let out = keccak256::keccak(arr, 1);
-//     constrain out[0] == 0;
+//     assert(out[0] == 0);
 // }
 
 // fn u64_4_to_ethereum_addr(

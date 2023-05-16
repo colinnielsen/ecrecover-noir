@@ -40,7 +40,7 @@ impl PubKey {
 
     fn to_eth_address(self) -> Field {
         let pub_key = helpers::unify_pub_x_pub_y(self.pub_x, self.pub_y);
-        let hashed_pub_key = std::hash::sha256(pub_key);
+        let hashed_pub_key = std::hash::keccak256(pub_key);
 
         helpers::u8_32_to_u160(hashed_pub_key)
     }
