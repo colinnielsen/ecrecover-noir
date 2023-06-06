@@ -16,26 +16,26 @@ impl PubKey {
     }
 
     fn from_unified(pub_key: [u8; 64]) -> PubKey {
-        let keys = helpers::split_pub_key(pub_key);
+        let (key_x, key_y) = helpers::split_pub_key(pub_key);
 
         PubKey {
-            pub_x: keys[0],
-            pub_y: keys[1],
+            pub_x: key_x,
+            pub_y: key_y,
         }
     }
 
     fn from_uncompressed(pub_key: [u8; 65]) -> PubKey {
-        let keys = helpers::split_uncompressed_pub_key(pub_key);
+        let (key_x, key_y) = helpers::split_uncompressed_pub_key(pub_key);
 
         PubKey {
-            pub_x: keys[0],
-            pub_y: keys[1],
+            pub_x: key_x,
+            pub_y: key_y,
         }
     }
 
     fn verify_sig(self, signature: [u8; 64], hashed_message: [u8; 32]) -> bool {
         let isValid = std::ecdsa_secp256k1::verify_signature(self.pub_x, self.pub_y, signature, hashed_message);
-        isValid == 1
+        isValid == true
     }
 
     fn to_eth_address(self) -> Field {
