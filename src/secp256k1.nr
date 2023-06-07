@@ -35,7 +35,7 @@ impl PubKey {
 
     fn verify_sig(self, signature: [u8; 64], hashed_message: [u8; 32]) -> bool {
         let isValid = std::ecdsa_secp256k1::verify_signature(self.pub_x, self.pub_y, signature, hashed_message);
-        isValid == true
+        isValid
     }
 
     fn to_eth_address(self) -> Field {
