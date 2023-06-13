@@ -10,7 +10,7 @@ fn ecrecover(
 ) -> pub Field {
     let key = secp256k1::PubKey::from_xy(pub_key_x, pub_key_y);
 
-    assert(key.verify_sig(signature, hashed_message) == true);
+    assert(key.verify_sig(signature, hashed_message));
     let addr = key.to_eth_address();
 
     addr
