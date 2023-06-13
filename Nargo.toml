@@ -4,3 +4,4 @@ compiler_version = "0.6.0"
 notes = "AMDG"
 
 [dependencies]
+array_helpers = { tag = "v0.1.0", git = "https://github.com/colinnielsen/noir-array-helpers" }
