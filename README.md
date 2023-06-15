@@ -2,16 +2,13 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## NOTE:
-
 **This software is unaudited and should not be used in production. Use at your own risk.**
 
 <hr>
-<br>
 
 **ECRecover Noir** includes tools to help prove secp256k1 signatures (Ethereum's curve) in Noir Circuits.
 
-The goal of this lib is to have a function, which mimics the functionality of `solidity`'s [`ecrecover`](https://docs.soliditylang.org/en/v0.8.17/units-and-global-variables.html#mathematical-and-cryptographic-functions) function, where given a `hash` and a signature, it returns the Ethereum address that signed the message. Unfortunately, for this naive implmentation we need the Ethereum account's full Public key (two concatenated 32byte x and y coordinates on the secp256k1 curve). An address's Public key is safe for public storage, and can actually be determined from any signed message, or an Etheruem transaction. See [this section](#getting-an-accounts-public-key) for a helper. There are also inputs in the [Prover.toml](./Prover.toml) file for reference.
+The goal of this lib is to have a function, which mimics the functionality of Solidity's [`ecrecover`](https://docs.soliditylang.org/en/v0.8.17/units-and-global-variables.html#mathematical-and-cryptographic-functions) function, where given a `hash` and a `signature`, it returns the Ethereum address that signed the message. Unfortunately, for this naive implmentation we need the Ethereum account's full Public key (two concatenated 32byte x and y coordinates on the secp256k1 curve). An address's Public key is safe for public storage, and can actually be determined from any signed message, or an Etheruem transaction. See [this section](#getting-an-accounts-public-key) for a typescript helper. There are also inputs in the [Prover.toml](./Prover.toml) file for reference.
 
 A fully fledged `ecrecover` may be released in the future, but it would be an incredibly massive, unoptimized circuit. For now, this is a good starting point.
 
@@ -60,7 +57,7 @@ struct PubKey {
 
 ### Initialization
 
-### `PubKey::from_xy(pub_x: [u8; 32], pub_y: [u8; 32]) -> PubKey`
+#### `PubKey::from_xy(pub_x: [u8; 32], pub_y: [u8; 32]) -> PubKey`
 
 Initialize a `PubKey` struct using a the x and y coordinates of the public key:
 
@@ -72,7 +69,7 @@ use dep::ecrecover;
 let key = ecrecover::secp256k1::PubKey::from_xy(pub_x, pub_y);
 ```
 
-### `PubKey::from_unified(pub_key: [u8; 64]) -> PubKey`
+#### `PubKey::from_unified(pub_key: [u8; 64]) -> PubKey`
 
 A helper constructor, which splits the inputs a concatenated public key for you:
 
@@ -82,7 +79,7 @@ use dep::ecrecover;
 let key = ecrecover::secp256k1::PubKey::from_unified(pub_key);
 ```
 
-### `PubKey::from_uncompressed(pub_key: [u8; 65]) -> PubKey`
+#### `PubKey::from_uncompressed(pub_key: [u8; 65]) -> PubKey`
 
 Another helper constructor, which assumes the 0x04 prefix for uncompressed public keys (`pub_key[0] == 0x04` is checked):
 
@@ -94,11 +91,11 @@ let key = ecrecover::secp256k1::PubKey::from_uncompressed(pub_key);
 
 <br>
 
-### Methods
+#### Methods
 
 The following methods are available on the `PubKey` struct:
 
-### `PubKey.verify_sig(signature: [u8; 64], hashed_message: [u8; 32]) -> bool`
+#### `PubKey.verify_sig(signature: [u8; 64], hashed_message: [u8; 32]) -> bool`
 
 Returns whether the signature is valid for the hashed message:
 
@@ -111,7 +108,7 @@ let is_valid = key.verify_sig(signature, hashed_message);
 std::println(is_valid); // true
 ```
 
-### `PubKey.to_eth_address(self) -> Field`
+#### `PubKey.to_eth_address(self) -> Field`
 
 Converts the `PubKey` to an Ethereum address as a 160 bit Field element - this is done by keccak256 hashing the concatenated x and y coordinates of the public key, and returning the last 160 bits:
 
@@ -122,7 +119,7 @@ let addr = key.to_eth_address();
 std::println(addr); // 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
 ```
 
-### `PubKey.ecrecover(signature: [u8; 64], hashed_message: [u8; 32]) -> Field`
+#### `PubKey.ecrecover(signature: [u8; 64], hashed_message: [u8; 32]) -> Field`
 
 A convenience method, which combines the `verify_sig` and `to_eth_address` methods into one. This is the method used in the main `ecrecover` function:
 
@@ -157,20 +154,20 @@ async function main() {
 
   const signature = await sender.signMessage(message); // get the signature of the message, this will be 130 bytes (concatenated r, s, and v)
 
-  console.log("\x1b[34m%s\x1b[0m", "signature 📝: ", signature);
+  console.log("signature 📝: ", signature);
 
   let pubKey_uncompressed = ethers.utils.recoverPublicKey(digest, signature);
-  console.log("\x1b[34m%s\x1b[0m", "uncompressed pubkey: ", pubKey_uncompressed);
+  console.log("uncompressed pubkey: ", pubKey_uncompressed);
 
   // recoverPublicKey returns `0x{hex"4"}{pubKeyXCoord}{pubKeyYCoord}` - so slice 0x04 to expose just the concatenated x and y
   //    see https://github.com/indutny/elliptic/issues/86 for a non-explanation explanation 😂
   let pubKey = pubKey_uncompressed.slice(4);
 
   let pub_key_x = pubKey.substring(0, 64);
-  console.log("\x1b[34m%s\x1b[0m", "public key x coordinate 📊: ", pub_key_x);
+  console.log("public key x coordinate 📊: ", pub_key_x);
 
   let pub_key_y = pubKey.substring(64);
-  console.log("\x1b[34m%s\x1b[0m", "public key y coordinate 📊: ", pub_key_y);
+  console.log("public key y coordinate 📊: ", pub_key_y);
 }
 
 main();
