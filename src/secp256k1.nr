@@ -40,6 +40,7 @@ impl PubKey {
     }
 
     fn from_uncompressed(pub_key: [u8; 65]) -> PubKey {
+        assert(pub_key[0] == 0x04);
         let (key_x, key_y) = split_uncompressed_pub_key(pub_key);
 
         PubKey {
