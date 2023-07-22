@@ -20,7 +20,7 @@ In your `Nargo.toml` file, add the following dependency:
 
 ```toml
 [dependencies]
-ecrecover = { tag = "v0.5.0", git = "https://github.com/colinnielsen/ecrecover" }
+ecrecover = { tag = "v0.5.0", git = "https://github.com/colinnielsen/ecrecover-noir" }
 ```
 
 ## Simple Usage
@@ -34,7 +34,7 @@ fn main(
   pub_key_y: [u8; 32],
   signature: [u8; 64],
   hashed_message: pub [u8; 32]
-) -> Field {
+) -> pub Field {
   let address = ecrecover::ecrecover(pub_key_x, pub_key_y, signature, hashed_message);
   std::println(address);
 
