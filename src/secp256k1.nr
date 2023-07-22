@@ -50,20 +50,20 @@ impl PubKey {
     }
 
     fn verify_sig(self, signature: [u8; 64], hashed_message: [u8; 32]) -> bool {
-        let isValid = std::ecdsa_secp256k1::verify_signature(self.pub_x, self.pub_y, signature, hashed_message);
-        isValid == 1
+        std::ecdsa_secp256k1::verify_signature(self.pub_x, self.pub_y, signature, hashed_message)
     }
 
     fn to_eth_address(self) -> Field {
         let pub_key = array_helpers::u8_32_to_u8_64_unconstrained(self.pub_x, self.pub_y);
-        let hashed_pub_key = std::hash::keccak256(pub_key);
+        let hashed_pub_key = std::hash::keccak256(pub_key, 64);
 
-        let mut right_20_bytes: [u8; 20] = [0; 20];
+        let mut addr: Field = 0;
         for i in 0..20 {
-            right_20_bytes[i] = hashed_pub_key[i + 12];
+            // shift left by 8 and add the new value
+            addr = (addr * 256) + hashed_pub_key[i + 12] as Field;
         }
 
-        array_helpers::u8_to_eth_address(right_20_bytes)
+        addr
     }
 
     fn ecrecover(
