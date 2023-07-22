@@ -1,6 +1,7 @@
 # ECRecover Noir
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Noir-Tests](https://github.com/colinnielsen/noir-array-helpers/actions/workflows/noir.yml/badge.svg)](https://github.com/colinnielsen/noir-array-helpers/actions/workflows/noir.yml)
 
 **This software is unaudited and should not be used in production. Use at your own risk.**
 
@@ -20,7 +21,7 @@ In your `Nargo.toml` file, add the following dependency:
 
 ```toml
 [dependencies]
-ecrecover = { tag = "v0.5.0", git = "https://github.com/colinnielsen/ecrecover-noir" }
+ecrecover = { tag = "v0.8.0", git = "https://github.com/colinnielsen/ecrecover-noir" }
 ```
 
 ## Simple Usage
