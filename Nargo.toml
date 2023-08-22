@@ -2,7 +2,6 @@
 name = "ecrecover"
 authors = ["@colinnielsen"]
 compiler_version = "0.9.0"
-name = "ecrecover"
 notes = "AMDG"
 type = "lib"
 
