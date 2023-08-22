@@ -2,6 +2,7 @@ name: Noir
 
 on:
   push:
+    branches: [main]
   pull_request:
     branches: [main]
 
@@ -18,7 +19,7 @@ jobs:
       - name: Install Nargo
         uses: noir-lang/noirup@v0.1.2
         with:
-          toolchain: v0.8.0
+          toolchain: v0.10.1
 
       - name: Run nargo test
         run: |
