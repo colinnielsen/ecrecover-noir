@@ -1,9 +1,9 @@
 [package]
 authors = ["@colinnielsen"]
-compiler_version = "0.9.0"
+compiler_version = "0.10.1"
 name = "ecrecover"
 notes = "AMDG"
 type = "lib"
 
 [dependencies]
-array_helpers = { tag = "v0.1.0", git = "https://github.com/colinnielsen/noir-array-helpers" }
+array_helpers = { tag = "v0.10.0", git = "https://github.com/colinnielsen/noir-array-helpers" }
