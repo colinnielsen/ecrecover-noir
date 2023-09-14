@@ -7,7 +7,7 @@ fn ecrecover(
     pub_key_y: [u8; 32],
     signature: [u8; 64], // clip v value
     hashed_message: [u8; 32]
-) -> pub Field {
+) -> Field {
     let key = secp256k1::PubKey::from_xy(pub_key_x, pub_key_y);
 
     assert(key.verify_sig(signature, hashed_message));
