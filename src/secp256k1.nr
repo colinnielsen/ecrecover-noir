@@ -23,14 +23,14 @@ fn split_uncompressed_pub_key(
 }
 
 impl PubKey {
-    fn from_xy(pub_x: [u8; 32], pub_y: [u8; 32]) -> PubKey {
+    pub fn from_xy(pub_x: [u8; 32], pub_y: [u8; 32]) -> PubKey {
         PubKey {
             pub_x,
             pub_y,
         }
     }
 
-    fn from_unified(pub_key: [u8; 64]) -> PubKey {
+    pub fn from_unified(pub_key: [u8; 64]) -> PubKey {
         let (key_x, key_y) = array_helpers::split_u8_64_unconstrained(pub_key);
 
         PubKey {
