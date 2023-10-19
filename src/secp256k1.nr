@@ -7,7 +7,6 @@ struct PubKey {
     pub_y: [u8; 32],
 }
 
-unconstrained
 fn split_uncompressed_pub_key(
     pub_key: [u8; 65]
 ) -> ([u8; 32], [u8; 32]) {
