@@ -54,7 +54,7 @@ impl PubKey {
     }
 
     fn to_eth_address(self) -> Field {
-        let pub_key = array_helpers::u8_32_to_u8_64_unconstrained(self.pub_x, self.pub_y);
+        let pub_key = array_helpers::u8_32_to_u8_64(self.pub_x, self.pub_y);
         let hashed_pub_key = std::hash::keccak256(pub_key, 64);
 
         let mut addr: Field = 0;
