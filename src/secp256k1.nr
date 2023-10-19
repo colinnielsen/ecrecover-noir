@@ -31,7 +31,7 @@ impl PubKey {
     }
 
     pub fn from_unified(pub_key: [u8; 64]) -> PubKey {
-        let (key_x, key_y) = array_helpers::split_u8_64_unconstrained(pub_key);
+        let (key_x, key_y) = array_helpers::split_u8_64(pub_key);
 
         PubKey {
             pub_x: key_x,
