@@ -1,6 +1,6 @@
 [package]
 authors = ["@colinnielsen"]
-compiler_version = "0.10.1"
+compiler_version = ">=0.10.1"
 name = "ecrecover"
 notes = "AMDG"
 type = "lib"
