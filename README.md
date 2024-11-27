@@ -5,6 +5,14 @@
 
 **This software is unaudited and should not be used in production. Use at your own risk.**
 
+## WARNING!
+
+**DO NOT use versions of this library < `v0.30.0`**
+
+This library contained a critical vulnerability found by @olehmisar. The circuits were critically underconstrained, allowing anyone to impersonate public Ethereum addresses.
+
+See more details [here](https://gist.github.com/olehmisar/4cfe6128eaac2bfbe1fa8eb46f0116d6).
+
 <hr>
 
 **ECRecover Noir** includes tools to help prove secp256k1 signatures (Ethereum's curve) in Noir Circuits.
@@ -21,7 +29,7 @@ In your `Nargo.toml` file, add the following dependency:
 
 ```toml
 [dependencies]
-ecrecover = { tag = "v0.19.0", git = "https://github.com/colinnielsen/ecrecover-noir" }
+ecrecover = { tag = "v0.30.0", git = "https://github.com/colinnielsen/ecrecover-noir" }
 ```
 
 ## Simple Usage
