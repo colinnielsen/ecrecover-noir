@@ -1,5 +1,3 @@
-use dep::std;
- 
 mod secp256k1;
 
 pub fn ecrecover(

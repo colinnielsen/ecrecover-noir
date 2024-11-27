@@ -1,8 +1,7 @@
 use dep::std;
-
 use dep::array_helpers;
 
-struct PubKey {
+pub struct PubKey {
     pub_x: [u8; 32],
     pub_y: [u8; 32],
 }
@@ -38,7 +37,7 @@ impl PubKey {
         }
     }
 
-    fn from_uncompressed(pub_key: [u8; 65]) -> PubKey {
+    pub fn from_uncompressed(pub_key: [u8; 65]) -> PubKey {
         assert(pub_key[0] == 0x04);
         let (key_x, key_y) = split_uncompressed_pub_key(pub_key);
 
@@ -48,11 +47,11 @@ impl PubKey {
         }
     }
 
-    fn verify_sig(self, signature: [u8; 64], hashed_message: [u8; 32]) -> bool {
+    pub fn verify_sig(self, signature: [u8; 64], hashed_message: [u8; 32]) -> bool {
         std::ecdsa_secp256k1::verify_signature(self.pub_x, self.pub_y, signature, hashed_message)
     }
 
-    fn to_eth_address(self) -> Field {
+    pub fn to_eth_address(self) -> Field {
         let pub_key = array_helpers::u8_32_to_u8_64(self.pub_x, self.pub_y);
         let hashed_pub_key = std::hash::keccak256(pub_key, 64);
 
