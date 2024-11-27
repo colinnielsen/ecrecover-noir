@@ -2,7 +2,7 @@ use dep::std;
  
 mod secp256k1;
 
-fn ecrecover(
+pub fn ecrecover(
     pub_key_x: [u8; 32],
     pub_key_y: [u8; 32],
     signature: [u8; 64], // clip v value

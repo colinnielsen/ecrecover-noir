@@ -7,7 +7,6 @@ struct PubKey {
     pub_y: [u8; 32],
 }
 
-unconstrained
 fn split_uncompressed_pub_key(
     pub_key: [u8; 65]
 ) -> ([u8; 32], [u8; 32]) {
@@ -23,15 +22,15 @@ fn split_uncompressed_pub_key(
 }
 
 impl PubKey {
-    fn from_xy(pub_x: [u8; 32], pub_y: [u8; 32]) -> PubKey {
+    pub fn from_xy(pub_x: [u8; 32], pub_y: [u8; 32]) -> PubKey {
         PubKey {
             pub_x,
             pub_y,
         }
     }
 
-    fn from_unified(pub_key: [u8; 64]) -> PubKey {
-        let (key_x, key_y) = array_helpers::split_u8_64_unconstrained(pub_key);
+    pub fn from_unified(pub_key: [u8; 64]) -> PubKey {
+        let (key_x, key_y) = array_helpers::split_u8_64(pub_key);
 
         PubKey {
             pub_x: key_x,
@@ -54,7 +53,7 @@ impl PubKey {
     }
 
     fn to_eth_address(self) -> Field {
-        let pub_key = array_helpers::u8_32_to_u8_64_unconstrained(self.pub_x, self.pub_y);
+        let pub_key = array_helpers::u8_32_to_u8_64(self.pub_x, self.pub_y);
         let hashed_pub_key = std::hash::keccak256(pub_key, 64);
 
         let mut addr: Field = 0;
