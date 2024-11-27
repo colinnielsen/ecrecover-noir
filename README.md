@@ -21,7 +21,7 @@ In your `Nargo.toml` file, add the following dependency:
 
 ```toml
 [dependencies]
-ecrecover = { tag = "v0.10.1", git = "https://github.com/colinnielsen/ecrecover-noir" }
+ecrecover = { tag = "v0.19.0", git = "https://github.com/colinnielsen/ecrecover-noir" }
 ```
 
 ## Simple Usage
